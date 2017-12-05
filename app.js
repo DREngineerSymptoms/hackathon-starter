@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
-const lusca = require('lusca');
+//const lusca = require('lusca');
 const dotenv = require('dotenv');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
@@ -59,10 +59,11 @@ mongoose.connection.on('error', (err) => {
 /**
  * Express configuration.
  */
+app.engine('html', require('ejs').renderFile);
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
 app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.set('view engine', 'html');
 app.use(expressStatusMonitor());
 app.use(compression());
 app.use(sass({
@@ -86,15 +87,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
-app.use(lusca.xframe('SAMEORIGIN'));
-app.use(lusca.xssProtection(true));
+// app.use((req, res, next) => {
+//   if (req.path === '/api/upload') {
+//     next();
+//   } else {
+//     lusca.csrf()(req, res, next);
+//   }
+// });
+// app.use(lusca.xframe('SAMEORIGIN'));
+// app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
@@ -128,6 +129,7 @@ app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
+app.get('/symptom',userController.getSymptom)
 app.get('/contact', contactController.getContact);
 app.post('/contact', contactController.postContact);
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
@@ -229,5 +231,80 @@ app.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Press CTRL-C to stop\n');
 });
+
+
+
+//var express = require('express');
+ //var html = require('html');
+//var http = require('http');
+var _ = require('underscore');
+
+//var app = express();
+
+//app.listen(process.env.PORT || 3000);
+
+//app.configure(function() {
+//    app.use(express.bodyParser());
+//});
+
+//app.set('views', __dirname + '/views')
+//app.engine('html', require('ejs').renderFile);
+//app.set('view engine', 'html');
+
+//app.use(express.static(__dirname + '/public'))
+
+app.set('view options', {
+    layout: false
+});
+
+app.get('/', function(req, res) {
+    res.render('index', {
+        title: 'Sym'
+    });
+});
+
+app.post('/search', function(req, res) {
+    var querystring = '';
+    console.log(req.body.query);
+    _.each(req.body.query, function(symptom) {
+        var body = symptom.split(',');
+        _.each(body, function(q) {
+            querystring += '+symptoms:'+q+'&';
+        });
+        querystring += 'and';
+    });
+
+    querystring = querystring.replace(/\s+/g, '%20');
+
+    var options = {
+        host: 'localhost',
+        path: '/symptom/data/_search?q='+querystring+'pretty=true&size=100',
+        port: 9200,
+        method: 'GET'
+    };
+
+    console.log('/symptom/data/_search?q='+querystring+'&pretty=true&size=100')
+
+    callback = function(response) {
+        var str = '';
+        //another chunk of data has been recieved, so append it to `str`
+        response.on('data', function (chunk) {
+            str += chunk;
+        });
+        //the whole response has been recieved, so we just print it out here
+        response.on('end', function () {
+            str.replace(/\s+/g, ' ');
+            res.send(str);
+        });
+    }
+    var request = http.request(options, callback);
+    request.on('error', function(err){
+        console.log(err);
+        res.send("");
+    });
+    request.end();
+});
+
+
 
 module.exports = app;

@@ -38,6 +38,7 @@ exports.getApi = (req, res) => {
  * GET /api/foursquare
  * Foursquare API example.
  */
+
 exports.getFoursquare = (req, res, next) => {
   const token = req.user.tokens.find(token => token.kind === 'foursquare');
   Promise.all([

@@ -1,0 +1,36 @@
+body
+{
+    background-image: url(https://hhpblog.s3.amazonaws.com/blog/wordpress/wp-content/uploads/2016/11/iStock_105325375_MEDIUM.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-position: fixed;
+    font-family: lato;
+    color: white;
+}
+html{
+    height: 100%;
+}
+.content{
+    text-align: center;
+    padding-top: 25%;
+    text-shadow: 0px 4px 8px black;
+}
+h1{
+    font-weight: 700px;
+    font-size: 5em;
+}
+hr
+{
+    width: 400px;
+    border-top: 1px solid #79f870;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+.content h1
+{
+    color: orange;
+}
+.collapse navbar-collapse
+{
+    color: white;
+}

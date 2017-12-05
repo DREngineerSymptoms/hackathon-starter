@@ -63,10 +63,20 @@ exports.logout = (req, res) => {
 exports.getSignup = (req, res) => {
   if (req.user) {
     return res.redirect('/');
+      //return res.json(req.user)
   }
   res.render('account/signup', {
     title: 'Create Account'
   });
+};
+exports.getSymptom = (req, res) => {
+    if (req.user) {
+        return res.redirect('/');
+        //return res.json(req.user)
+    }
+    res.render('account/symptom', {
+        title: 'Symptom Checker '
+    });
 };
 
 /**
@@ -75,7 +85,7 @@ exports.getSignup = (req, res) => {
  */
 exports.postSignup = (req, res, next) => {
   req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  // req.assert('password', 'Password must be at least 4 characters long').len(4);
   req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
@@ -98,6 +108,7 @@ exports.postSignup = (req, res, next) => {
       return res.redirect('/signup');
     }
     user.save((err) => {
+      console.log(123)
       if (err) { return next(err); }
       req.logIn(user, (err) => {
         if (err) {
