@@ -8,24 +8,86 @@ $(document).ready(function(e) {
         $('.symptoms-added').append('<div class="added-symptom" data-toggle="tooltip" data-placement="left" title="Tooltip on left">'+query+'</div>');
         // <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button>
         $('.search-results').empty();   
-        $('.search-results').append('<table class="table"><tbody></tbody></table>');    
-        $.ajax({
-            url: '/search',
-            type: 'POST',
-            data: {'query': chosen},
-            success: function(data) {
-                console.log(data);
-                var parsed_data = JSON.stringify(eval("(" + data + ")"));
-                var recvData = JSON.parse(parsed_data);
-                var hitsArray = recvData['hits']['hits'];
-                _.each(hitsArray, function(obj) {
-                    var likelihood = computeLikelihood(obj['_source']);
-                    if (likelihood > 0) {
-                        $('tbody').append(constructDiv(obj, likelihood));
-                    }
-                });
-            }
-        });
+        $('.search-results').append('<table class="table"><tbody></tbody></table>');
+
+        console.log(chosen);
+ var arr =[];
+        var allDiseasesName = {
+            "angina":0,
+            "pte":0,
+            "gerd":0,
+            "dissection of aorta":0,
+            "pleurisy":0,
+            "rib fracture":0,
+            "pneumothorax":0,
+            "costochondritis":0,
+            "herpetic lesions":0,
+            "anxiety":0,
+
+        }
+ for (var i=0;i<chosen.length;i++){
+
+
+
+     // if(diseaseObject[chosen[i]]){
+     //     arr.push(diseaseObject[chosen[i]])
+     // }
+
+
+     allDiseasesName[diseaseObject[chosen[i]]]++
+     
+ }
+
+
+ for (var key in allDiseasesName){
+     if(allDiseasesName[key]>=3){
+         console.log(key)
+         $(".table").text("fellow is suffering from " + key)
+
+
+     }
+
+ }
+
+
+
+
+ console.log(allDiseasesName);
+ // var nameOfDisease=0;
+ //
+ //        for(var i=0;i<arr.length;i++)
+ //        {
+ //            if(arr[i] ===)
+ //            {
+ //               numOfAngina++;
+ //            }
+ //            if(numOfAngina>=5)
+ //            {
+ //                console.log("he is suffering from Angina")
+ //            }
+ //
+ //        }
+
+
+
+
+        // $.ajax({
+        //     url: '/search',
+        //     type: 'POST',
+        //     data: {'query': chosen},
+        //     success: function(data) {
+        //         console.log(data);
+        //         var parsed_data = JSON.stringify(eval("(" + data + ")"));
+        //         var recvData = JSON.parse(parsed_data);
+        //         var hitsArray = recvData['hits']['hits'];
+        //         _.each(hitsArray, function(obj) {
+        //             var likelihood = computeLikelihood(obj['_source']);
+        //             if (likelihood > 0) {
+        //                 $('tbody').append(constructDiv(obj, likelihood));
+        //             }
+        //         });
+        //     }
+        // });
         $('.box').val('');
     });
 
@@ -41,7 +103,12 @@ $(document).ready(function(e) {
         chosen = newChosen;
         $(this).remove();
         $('.search-results').empty();       
-        $('.search-results').append('<table class="table"><tbody></tbody></table>');        
+        $('.search-results').append('<table class="table"><tbody></tbody></table>');
+
+
+
+
+        console.log(chosen);
         $.ajax({
             url: '/search',
             type: 'POST',
