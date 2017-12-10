@@ -42,7 +42,7 @@ $(document).ready(function(e) {
  for (var key in allDiseasesName){
      if(allDiseasesName[key]>=3){
          console.log(key)
-         $(".table").text("fellow is suffering from " + key)
+         $(".table").text("Patient might be suffering from " + key)
 
 
      }
