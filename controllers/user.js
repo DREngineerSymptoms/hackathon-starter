@@ -69,6 +69,15 @@ exports.getSignup = (req, res) => {
     title: 'Create Account'
   });
 };
+exports.getPatient = (req, res) => {
+    if (req.user) {
+        return res.redirect('/');
+        //return res.json(req.user)
+    }
+    res.render('account/patient', {
+        title: 'Patient Information '
+    });
+};
 exports.getSymptom = (req, res) => {
     if (req.user) {
         return res.redirect('/');
